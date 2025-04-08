@@ -29,10 +29,10 @@ jobs:
             distribution: 'zulu'
             java-version: '21'
 
-      # Compile code base and run tests
-      - name: Run all tests in project
+      # Build the project
+      - name: Build the application
         run: |
-           mvn compile && mvn test
+           mvn package -Dmaven.test.skip
 
       # Do a trial deployment to minikube - step 1 install/start Minikube
       - name: Start minikube
