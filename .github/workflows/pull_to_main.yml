@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  run_tests_and_update_image_and_coverage_report:
+  build_app_and_deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
