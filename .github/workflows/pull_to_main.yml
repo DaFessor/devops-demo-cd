@@ -45,7 +45,7 @@ jobs:
         run: minikube image build -t local/devops-demo-cd:v1.0.0 .
       # Step 4 - deploy the image to the cluster
       - name: Deploy to minikube
-        run:
+        run: |
           cd k8s && minikube kubectl apply -- --filename=backend-deployment.yaml,backend-service.yaml,db-deployment.yaml,db-service.yaml,db-persistentvolumeclaim.yaml
           minikube kubectl rollout status deployment db backend -- -n default --timeout=60s
       # Step 5 - check that the deployment works by doing some REST calls
