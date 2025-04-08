@@ -55,7 +55,8 @@ jobs:
           echo "ok1"
           minikube tunnel --cleanup &
           echo "ok2"
-          minikube service list
+          URL=$(minikube service list | grep -E "http://[0-9.:]+")
+          echo "URL: ${URL}"
           echo "ok3"
-          curl --location "localhost:8080/api/v1/tasks" --header 'Content-Type: application/json'
+          curl --location "${URL}/api/v1/tasks" --header 'Content-Type: application/json'
           echo "ok4"
