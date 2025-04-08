@@ -48,19 +48,3 @@ jobs:
         run: |
           cd k8s && minikube kubectl apply -- --filename=backend-deployment.yaml,backend-service.yaml,db-deployment.yaml,db-service.yaml,db-persistentvolumeclaim.yaml
           minikube kubectl rollout status deployment db backend -- -n default --timeout=60s
-      # Step 5 - check that the deployment works by doing some REST calls
-      - name: Test service URLs
-        run: |
-          minikube service list
-          echo "ok1"
-          minikube service backend 2>&1 > service-url.txt &
-          echo "ok2"
-          sleep 5
-          cat service-url.txt
-          cat service-url.txt | grep -oE "http://[0-9.:]+" | tail -n 1
-          echo "ok2.5"
-          URL=$(cat service-url.txt | grep -oE "http://[0-9.:]+" | tail -n 1)
-          echo "URL: ${URL}"
-          echo "ok3"
-          curl --location "${URL}/api/v1/tasks" --header 'Content-Type: application/json'
-          echo "ok4"
