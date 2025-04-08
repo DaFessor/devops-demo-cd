@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file ../docker-compose.yml convert
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: backend
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: backend
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file ../docker-compose.yml convert
+        kompose.version: 1.35.0 (9532ceef3)
+      labels:
+        io.kompose.service: backend
+    spec:
+      containers:
+        - env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: tasklist_password
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://db:5432/tasklist_db
+            - name: SPRING_DATASOURCE_USERNAME
+              value: tasklist_user
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+          image: docker.io/local/devops-demo-cd:v1.0.0
+          imagePullPolicy: Never
+          name: tasklist-backend
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+      restartPolicy: Always

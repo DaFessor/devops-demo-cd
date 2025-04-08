@@ -1,0 +1,32 @@
+services:
+  db:
+    image: "postgres:17.4-alpine"
+    restart: always
+    container_name: "tasklist-postgresql"
+    ports:
+      - 5432:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=tasklist_db
+      - POSTGRES_USER=tasklist_user
+      - POSTGRES_PASSWORD=tasklist_password
+
+  backend:
+    image: 'devops-demo-cd:v1.0.0'
+    build:
+      context: ./
+    container_name: 'tasklist-backend'
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/tasklist_db
+      - SPRING_DATASOURCE_USERNAME=tasklist_user
+      - SPRING_DATASOURCE_PASSWORD=tasklist_password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+volumes:
+  db:
+    driver: local
