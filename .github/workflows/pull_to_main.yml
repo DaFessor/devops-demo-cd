@@ -51,7 +51,6 @@ jobs:
           cd k8s && kubectl apply --filename=backend-deployment.yaml,backend-service.yaml,db-deployment.yaml,db-service.yaml,db-persistentvolumeclaim.yaml
           kubectl wait --for=condition=Ready pod -l app=cd-example
           kubectl get all
-          kubectl rollout status deployment db backend -- -n default --timeout=60s
       # Step 5 - check that the deployment works by doing some REST calls
       - name: Test service URLs
         run: |
