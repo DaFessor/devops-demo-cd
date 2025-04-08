@@ -53,9 +53,7 @@ jobs:
         run: |
           minikube service list
           echo "ok1"
-          minikube service backend --url 2>&1 | grep -E "^http.*$"
+          minikube tunnel --cleanup &
           echo "ok2"
-          URL=$(minikube service backend --url 2>&1 | grep -E "^http.*$")
-          echo "ok3"
           echo "------------------opening the service @ ${URL} ------------------"
-          curl --location "${URL}/api/v1/tasks" --header 'Content-Type: application/json'
+          curl --location "$localhost:8080/api/v1/tasks" --header 'Content-Type: application/json'
