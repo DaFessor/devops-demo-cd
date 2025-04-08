@@ -9,7 +9,6 @@ spec:
   selector:
     app: cd-example
   ports:
-    type: NodePort
     - name: http
       port: 8080
       targetPort: 8080
