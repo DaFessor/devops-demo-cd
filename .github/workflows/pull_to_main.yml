@@ -59,4 +59,5 @@ jobs:
           kubectl port-forward service/cd-example 8080:8080 &> /dev/null &
           sleep 5
           kubectl port-forward service/cd-example 8080:8080 &> /dev/null &
-          curl -i localhost:8080/api/v1/tasks --header 'Content-Type: application/json'
+          sleep 5
+          curl --location 'localhost:8080/api/v1/tasks' --header 'Content-Type: application/json'
