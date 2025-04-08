@@ -55,13 +55,15 @@ jobs:
       - name: Setup service URLs
         run: |
           echo "CLUSTER_IP=$(kubectl get service cd-example --output='jsonpath={.spec.clusterIPs[0]}')"
-          echo "SERVICE_URL=$(minikube service cd-example --url)"
+          SERVICE_URL=$(minikube service cd-example --url)
+          echo "SERVICE_URL=$SERVICE_URL"
+          export SERVICE_URL
           kubectl port-forward service/cd-example 8080:8080 &> /dev/null &
           sleep 5
           kubectl port-forward service/cd-example 8080:8080 &> /dev/null &
       - name: Test REST API
         run: |
-          curl -i localhost:8080/api/v1/tasks
+          curl -i "${SERVICE_URL}/api/v1/tasks"
       - name: Cleanup
         run: |
           eval $(minikube docker-env -u)
