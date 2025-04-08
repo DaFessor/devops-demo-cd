@@ -55,6 +55,8 @@ jobs:
           echo "ok1"
           minikube service backend 2>&1 > service-url.txt &
           echo "ok2"
+          cat service-url.txt | grep -oE "http://[0-9.:]+" | tail -n 1
+          echo "ok2.5"
           URL=$(cat service-url.txt | grep -oE "http://[0-9.:]+" | tail -n 1)
           echo "URL: ${URL}"
           echo "ok3"
