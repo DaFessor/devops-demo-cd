@@ -53,7 +53,7 @@ jobs:
         run: |
           minikube service list
           echo "ok1"
-          minkube service backend 2>&1 > service-url.txt &
+          minikube service backend 2>&1 > service-url.txt &
           echo "ok2"
           URL=$(cat service-url.txt | grep -oE "http://[0-9.:]+" | tail -n 1)
           echo "URL: ${URL}"
