@@ -1,24 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose --file ../docker-compose.yml convert
-    kompose.version: 1.35.0 (9532ceef3)
   labels:
-    io.kompose.service: backend
-  name: backend
+    app: cd-example
+  name: cd-example
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: backend
+      app: cd-example
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose --file ../docker-compose.yml convert
-        kompose.version: 1.35.0 (9532ceef3)
+      name: cd-example
       labels:
-        io.kompose.service: backend
+        app: cd-example
     spec:
       containers:
         - env:
@@ -32,7 +27,7 @@ spec:
               value: update
           image: docker.io/local/devops-demo-cd:v1.0.0
           imagePullPolicy: Never
-          name: tasklist-backend
+          name: cd-example
           resources:
             limits:
               memory: "512Mi"
