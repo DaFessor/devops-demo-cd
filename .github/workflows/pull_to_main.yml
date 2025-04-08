@@ -52,6 +52,6 @@ jobs:
       - name: Test service URLs
         run: |
           minikube service list
-          minikube service backend --url
-          echo "------------------opening the service------------------"
-          curl --location "$(minikube service backend --url)/api/v1/tasks" --header 'Content-Type: application/json'
+          URL=$(minikube service backend --url)
+          echo "------------------opening the service @ ${URL} ------------------"
+          curl --location "${URL}/api/v1/tasks" --header 'Content-Type: application/json'
