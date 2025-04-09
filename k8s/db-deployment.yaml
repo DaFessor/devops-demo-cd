@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose --file ../docker-compose.yml convert
+    kompose.cmd: kompose convert --file ../docker-compose.yml
     kompose.version: 1.35.0 (9532ceef3)
   labels:
     io.kompose.service: db
@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose --file ../docker-compose.yml convert
+        kompose.cmd: kompose convert --file ../docker-compose.yml
         kompose.version: 1.35.0 (9532ceef3)
       labels:
         io.kompose.service: db
@@ -30,18 +30,11 @@ spec:
               value: tasklist_password
             - name: POSTGRES_USER
               value: tasklist_user
-          image: docker.io/library/postgres:17.4-alpine
+          image: postgres:17.4-alpine
           name: tasklist-postgresql
           ports:
             - containerPort: 5432
               protocol: TCP
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: db

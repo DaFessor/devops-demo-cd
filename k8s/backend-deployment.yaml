@@ -1,19 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    kompose.cmd: kompose convert --file ../docker-compose.yml
+    kompose.version: 1.35.0 (9532ceef3)
   labels:
-    app: cd-example
-  name: cd-example
+    io.kompose.service: backend
+  name: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cd-example
+      io.kompose.service: backend
   template:
     metadata:
-      name: cd-example
+      annotations:
+        kompose.cmd: kompose convert --file ../docker-compose.yml
+        kompose.version: 1.35.0 (9532ceef3)
       labels:
-        app: cd-example
+        io.kompose.service: backend
     spec:
       containers:
         - env:
@@ -25,16 +30,8 @@ spec:
               value: tasklist_user
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               value: update
-          image: docker.io/local/devops-demo-cd:v1.0.0
-          imagePullPolicy: Never
-          name: cd-example
-          resources:
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
+          image: devops-demo-cd:v1.0.0
+          name: tasklist-backend
           ports:
             - containerPort: 8080
               protocol: TCP

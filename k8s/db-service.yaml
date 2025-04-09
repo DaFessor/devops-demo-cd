@@ -2,8 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
+    kompose.cmd: kompose convert --file ../docker-compose.yml
+    kompose.version: 1.35.0 (9532ceef3)
   labels:
-    app: db
+    io.kompose.service: db
   name: db
 spec:
   ports:
@@ -11,4 +13,4 @@ spec:
       port: 5432
       targetPort: 5432
   selector:
-    app: db
+    io.kompose.service: db
