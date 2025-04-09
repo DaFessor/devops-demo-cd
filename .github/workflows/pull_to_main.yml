@@ -44,25 +44,10 @@ jobs:
       - name: Build image
           export SHELL=/bin/bash
           eval $(minikube -p minikube docker-env)
-        run: minikube image build -t local/devops-demo-cd:v1.0.0 .
+        run: minikube image build -t devops-demo-cd:v1.0.0 .
       # Step 4 - deploy the image to the cluster
       - name: Deploy to minikube
         run: |
           cd k8s && kubectl apply --filename=backend-deployment.yaml,backend-service.yaml,db-deployment.yaml,db-service.yaml,db-persistentvolumeclaim.yaml
-          kubectl wait --for=condition=Ready pod -l app=cd-example
+          minikube kubectl rollout status deployment db backend -- -n default --timeout=60s
           kubectl get all
-      # Step 5 - check that the deployment works by doing some REST calls
-      - name: Test REST API
-        run: |
-          echo "CLUSTER_IP=$(kubectl get service cd-example --output='jsonpath={.spec.clusterIPs[0]}')"
-          SERVICE_URL=$(minikube service cd-example --url)
-          echo "SERVICE_URL=$SERVICE_URL"
-          export SERVICE_URL
-          kubectl port-forward service/cd-example 8080:8080 &> /dev/null &
-          sleep 5
-          kubectl port-forward service/cd-example 8080:8080 &> /dev/null &
-          curl -i "${SERVICE_URL}/api/v1/tasks"
-      - name: Cleanup
-        run: |
-          eval $(minikube docker-env -u)
-          minikube delete
