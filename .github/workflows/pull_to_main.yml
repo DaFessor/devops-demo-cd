@@ -56,6 +56,6 @@ jobs:
         run: |
           minikube service backend > url_backend &
           sleep 10
-          URL=$(cat url_backend | grep -oP "http:\/\/[0-9.:]+" | tail -n1)
-          echo "Backend URL: ${URL}"
-          curl --location '${URL}/api/v1/tasks' --header 'Content-Type: application/json' --data '{"name":"Learn Spring Boot","description":"Complete the Spring Boot task list tutorial"}'
+          BACKEND_URL=$(cat url_backend | grep -oP "http:\/\/[0-9.:]+" | tail -n1)/api/v1/tasks
+          echo "Backend URL: ${BACKEND_URL}"
+          curl "${BACKEND_URL}" --header 'Content-Type: application/json' --data '{"name":"Learn Spring Boot","description":"Complete the Spring Boot task list tutorial"}'
