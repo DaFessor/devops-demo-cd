@@ -42,12 +42,20 @@ jobs:
         run: minikube kubectl get pods -- -A
       # Step 3 - build image with our application
       - name: Build image
-          export SHELL=/bin/bash
-          eval $(minikube -p minikube docker-env)
         run: minikube image build -t devops-demo-cd:v1.0.0 .
       # Step 4 - deploy the image to the cluster
       - name: Deploy to minikube
         run: |
-          cd k8s && kubectl apply --filename=backend-deployment.yaml,backend-service.yaml,db-deployment.yaml,db-service.yaml,db-persistentvolumeclaim.yaml
+          cd k8s && minikube kubectl apply -- --filename=backend-deployment.yaml,backend-service.yaml,db-deployment.yaml,db-service.yaml,db-persistentvolumeclaim.yaml
           minikube kubectl rollout status deployment db backend -- -n default --timeout=60s
-          kubectl get all
+          minikube kubectl get all
+      # Step 5 - check that the application responds to REST requests
+      # This step is not needed for the deployment, but it is useful to check
+      - name: Check that application is running
+        run: |
+          minikube service backend &> url_backend &
+          sleep 10
+          BACKEND_HOSTADDR=$(cat url_backend | grep -oP "http:\/\/[0-9.:]+" | tail -n1)
+          echo "Backend host address: ${BACKEND_HOSTADDR}"
+          curl "${BACKEND_HOSTADDR}/api/v1/tasks" --header 'Content-Type: application/json' --data '{"name":"Verify REST api","description":"Do a few REST calls to the backend service"}'
+          curl "${BACKEND_HOSTADDR}/api/v1/tasks" --header 'Content-Type: application/json'
