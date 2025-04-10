@@ -54,7 +54,7 @@ jobs:
       # Step 5 - check that the application is running
       - name: Check that application is running
         run: |
-          minikube service backend > url_backend &
+          minikube service backend &> url_backend &
           sleep 10
           BACKEND_URL=$(cat url_backend | grep -oP "http:\/\/[0-9.:]+" | tail -n1)/api/v1/tasks
           echo "Backend URL: ${BACKEND_URL}"
