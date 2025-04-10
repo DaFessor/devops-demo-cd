@@ -51,3 +51,10 @@ jobs:
           cd k8s && kubectl apply --filename=backend-deployment.yaml,backend-service.yaml,db-deployment.yaml,db-service.yaml,db-persistentvolumeclaim.yaml
           minikube kubectl rollout status deployment db backend -- -n default --timeout=60s
           kubectl get all
+      # Step 5 - check that the application is running
+      - name: Check that application is running
+        run: |
+          minikube service backend > url_backend &
+          URL=$(cat url_backend | grep -oP "http:\/\/[0-9.:]+" | tail -n1)
+          echo "Backend URL: ${URL}"
+          curl --location '${URL}/api/v1/tasks' --header 'Content-Type: application/json' --data '{"name":"Learn Spring Boot","description":"Complete the Spring Boot task list tutorial"}'
