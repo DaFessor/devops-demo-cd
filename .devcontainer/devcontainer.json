@@ -1,18 +1,34 @@
 {
-	"name": "doc1-cd-demo",
+	"name": "devops-demo-cd",
 	"build": {
 		"dockerfile": "Dockerfile",
 	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
+
 				"vscjava.vscode-java-pack",
-				"vmware.vscode-boot-dev-pack",
-				"mhutchie.git-graph",
-				"donjayamanne.githistory",
+                "vscjava.vscode-spring-boot-dashboard",
+                "vscjava.vscode-spring-initializr",
+                "vmware.vscode-spring-boot",
+                "wmware.vscode-boot-dev-pack",
+                "redhat.java",
+                "vscjava.vscode-maven",
+                "ms-azuretools.vscode-docker",
+                "donjayamanne.githistory",
+                "mhutchie.git-graph",
+                "codezombiech.gitignore",
+                "docker.docker",
 				"peakchen90.open-html-in-browser",
-				"prateekmahendrakar.prettyxml"
+                "redhat.vscode-yaml"
 			]
 		}
-	}
+	},
+	"postAttachCommand":
+        "doas chgrp wheel /var/run/docker.sock && echo -Dmaven.repo.local=/workspaces/devops-demo-cd/.m2/repository > /workspaces/devops-demo-cd/.mvn/maven.config",
+    "remoteUser": "vscode",
+    "mounts": [
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.m2,target=/workspaces/${localWorkspaceFolderBasename}/.m2,type=bind,consistency=cached",
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    ]
 }
