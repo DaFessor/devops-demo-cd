@@ -1,6 +1,9 @@
-# This workflow is triggered on push to the main branch and on pull requests
-# to the main branch. It runs all tests, builds a Docker image, and deploys
-# the test coverage report to GitHub Pages.
+# This workflow is triggered on pull requests to the main branch.
+# It builds a Docker image, and deploys the application to a Minikube cluster.
+# This allows us to test the deployment process and ensure that the application
+# works correctly in a Kubernetes environment before merging changes into the
+# main branch.
+
 name: Build and Deploy to Minikube
 
 on:
@@ -29,7 +32,12 @@ jobs:
             distribution: 'zulu'
             java-version: '21'
 
-      # Build the project
+      # Run tests
+      - name: Run all tests in project
+        run: |
+           mvn compile && mvn test
+
+      # Build/package the project for deployment
       - name: Build the application
         run: |
            mvn package -Dmaven.test.skip

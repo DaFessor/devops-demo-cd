@@ -50,12 +50,13 @@ class TaskServiceImplTest {
     @Test
     void createTask_shouldSaveAndReturnTask() {
         // Arrange: Configure the mock repository's save method
-        // When save is called with any Task object, return that object after setting an ID
+        // Return a new persisted instance to avoid mutating the argument captured by Mockito.
         when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> {
             Task taskToSave = invocation.getArgument(0);
-            taskToSave.setId(5L); // Simulate database assigning an ID
-            taskToSave.setLastModified(LocalDateTime.now()); // Simulate auditing
-            return taskToSave;
+            Task persistedTask = new Task(taskToSave.getName(), taskToSave.getDescription());
+            persistedTask.setId(5L); // Simulate database assigning an ID
+            persistedTask.setLastModified(LocalDateTime.now()); // Simulate auditing
+            return persistedTask;
         });
 
         // Act: Call the service method
@@ -133,6 +134,7 @@ class TaskServiceImplTest {
     void updateTask_whenTaskExists_shouldUpdateAndReturnTask() {
         // Arrange
         Long taskId = 1L;
+        LocalDateTime originalLastModified = task1.getLastModified();
         Task updateDetails = new Task("Updated Name", "Updated Desc");
         Task existingTask = task1; // Use the task from setUp
 
@@ -157,7 +159,7 @@ class TaskServiceImplTest {
         assertEquals(taskId, updatedTask.getId()); // ID should remain the same
         assertEquals("Updated Name", updatedTask.getName()); // Name should be updated
         assertEquals("Updated Desc", updatedTask.getDescription()); // Description should be updated
-        assertNotEquals(task1.getLastModified(), updatedTask.getLastModified()); // Timestamp should change
+        assertNotEquals(originalLastModified, updatedTask.getLastModified()); // Timestamp should change
 
         // Verify findById and save were called
         verify(taskRepository, times(1)).findById(taskId);

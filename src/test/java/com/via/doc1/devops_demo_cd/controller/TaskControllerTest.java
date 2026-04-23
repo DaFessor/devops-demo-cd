@@ -1,41 +1,50 @@
 package com.via.doc1.devops_demo_cd.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.via.doc1.devops_demo_cd.exception.GlobalExceptionHandler;
 import com.via.doc1.devops_demo_cd.model.Task;
 import com.via.doc1.devops_demo_cd.service.TaskService;
-import com.fasterxml.jackson.databind.ObjectMapper; // For JSON serialization
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.*;
-import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(TaskController.class) // Test only the TaskController slice
+@ExtendWith(MockitoExtension.class)
 class TaskControllerTest {
 
-    @Autowired // MockMvc is auto-configured by @WebMvcTest
     private MockMvc mockMvc;
 
-    @MockitoBean // Creates a Mockito mock and adds it to the ApplicationContext
+    @Mock
     private TaskService taskService;
 
-    @Autowired // ObjectMapper is usually available in the test context
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private Task task1;
     private Task task2;
@@ -44,6 +53,11 @@ class TaskControllerTest {
 
     @BeforeEach
     void setUp() {
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(new TaskController(taskService))
+            .setControllerAdvice(new GlobalExceptionHandler())
+            .build();
+
         task1 = new Task("Task One", "Desc One");
         task1.setId(1L);
         task1.setLastModified(LocalDateTime.now().minusHours(1));
@@ -124,7 +138,7 @@ class TaskControllerTest {
                         .content(objectMapper.writeValueAsString(taskInput))) // Serialize input object to JSON
                 .andExpect(status().isCreated()) // 201 Created
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header().string("Location", org.hamcrest.Matchers.endsWith("/api/v1/tasks/" + taskCreated.getId()))) // Check Location header
+                .andExpect(header().string("Location", endsWith("/api/v1/tasks/" + taskCreated.getId()))) // Check Location header
                 .andExpect(jsonPath("$.id", is(taskCreated.getId().intValue()))) // Check response body
                 .andExpect(jsonPath("$.name", is(taskInput.getName())))
                 .andExpect(jsonPath("$.description", is(taskInput.getDescription())))
