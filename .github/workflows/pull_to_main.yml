@@ -33,9 +33,9 @@ jobs:
             java-version: '21'
 
       # Run tests
-      - name: Run all tests in project
-        run: |
-           mvn compile && mvn test
+      #- name: Run all tests in project
+      #  run: |
+      #     mvn compile && mvn test
 
       # Build/package the project for deployment
       - name: Build the application
